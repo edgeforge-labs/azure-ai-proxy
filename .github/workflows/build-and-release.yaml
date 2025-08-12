@@ -1,0 +1,50 @@
+name: Binary Build and Release
+
+permissions:
+  id-token: write
+  contents: write
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'docs/**'
+      - 'readme.md'
+      - '.gitignore'
+  workflow_dispatch:
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1: Checkout code (required before using the action)
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history to use GitVersion
+          persist-credentials: true
+      # 2: Call our custom `GitVersion action` to tag the repo
+      - name: Tag with GitVersion
+        id: gitversion
+        uses: michielvha/gitversion-tag-action@v5
+        with:
+          configFilePath: gitversion.yml  # Path to your GitVersion config file
+      # 3: Use the custom build-release action
+      - name: Build and Release
+        uses: michielvha/goreleaser-action@v1
+        with:
+          github-token: ${{ secrets.AAI_GITHUB_TOKEN }}
+          pgp-private-key: ${{ secrets.PGP_PRIVATE_KEY }}
+          go-version: '1.24.0'
+      # 4: Build and push Docker image
+      - name: Build and Push Docker Image
+        id: docker-build
+        uses: michielvha/docker-release-action@main
+        with:
+          username: edgeforge
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          project: ${{ github.event.repository.name }}
+          version: ${{ steps.gitversion.outputs.semver }}
+          platforms: linux/amd64,linux/arm64

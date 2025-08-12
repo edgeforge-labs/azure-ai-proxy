@@ -1,0 +1,64 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "semanticCommits": "enabled",
+  "prHourlyLimit": 0,
+  "extends": [
+    "config:recommended"
+  ],
+  "constraints": {
+    "go": "1.24"
+  },
+  "enabledManagers": [
+    "gomod"
+  ],
+  "postUpdateOptions": [
+    "gomodTidy"
+  ],
+  "packageRules": [
+    {
+      "matchPackageNames": [
+        "go",
+        "golang"
+      ],
+      "separateMinorPatch": true
+    },
+    {
+      "matchPackageNames": [
+        "go",
+        "golang"
+      ],
+      "groupName": "go patch version",
+      "matchUpdateTypes": [
+        "patch"
+      ]
+    },
+    {
+      "matchPackageNames": [
+        "go",
+        "golang"
+      ],
+      "groupName": "go minor version",
+      "matchUpdateTypes": [
+        "minor"
+      ]
+    },
+    {
+      "matchManagers": [
+        "gomod"
+      ],
+      "matchUpdateTypes": [
+        "minor"
+      ],
+      "groupName": "Minor Go modules"
+    },
+    {
+      "matchManagers": [
+        "gomod"
+      ],
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "groupName": "Patch Go modules"
+    }
+  ]
+}
