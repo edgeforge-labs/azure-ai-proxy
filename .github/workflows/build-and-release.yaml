@@ -12,6 +12,8 @@ on:
       - 'docs/**'
       - 'readme.md'
       - '.gitignore'
+      - 'LICENSE'
+      - '.github/workflows/build-and-release.yaml'
   workflow_dispatch:
 
 jobs:
